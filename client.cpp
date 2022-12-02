@@ -1,6 +1,5 @@
 /* cliTCPIt.c - Exemplu de client TCP
    Trimite un nume la server; primeste de la server "Hello nume".
-
    Autor: Lenuta Alboaie  <adria@infoiasi.ro> (c)2009
 */
 #include <sys/types.h>
@@ -24,27 +23,28 @@ struct stat st;
 
 /* portul de conectare la server*/
 int port;
-void sendFile(FILE *fp, int sd);
-void sendFileBinary(FILE *fp, int sd,long int size);
+//void sendFile(FILE *fp, int sd);
+void sendFile(FILE *fp, int sd,long int size);
 int min(int a, int b)
 {
     return a < b ? a : b;
 }
 void sendType(char *fileTypes, int sd)
 {
-    char response[5];
+    char response[TRANSFERSIZE];
     printf("%s \n %d\n", fileTypes, sizeof(fileTypes));
     if (send(sd, fileTypes, TRANSFERSIZE, 0) == -1)
     {
         perror("[client] Error in sending file TYPE");
         exit(1);
     }
-    int r = recv(sd, response, min(TRANSFERSIZE, sizeof(response)), 0);
+    int r = recv(sd, response,  TRANSFERSIZE, 0);
     printf("%s", response);
     if (strcmp(response, "OK") == 0)
         printf("\n---------OK\n");
     else
         printf("\n---------NAH\n");
+    bzero(response,TRANSFERSIZE);
 }
 void sendSize(long int sz, int sd)
 {
@@ -59,19 +59,20 @@ void sendSize(long int sz, int sd)
 void sendFileConvert(FILE *fp, int sd)
 {
     char *response = {0};
-    // sendType("latex2html",sd);
-    // sleep(1);
+    sendType("latex2html",sd);
+  //  sleep(5);
     fseek(fp, 0L, SEEK_END);
     long int sz = ftell(fp);
     fseek(fp, 0L, SEEK_SET);
     printf("%ld", sz);
     sendSize(sz, sd);
-    sendFileBinary(fp, sd, sz);
+   // sleep(5);
+    sendFile(fp, sd, sz);
     // int r =  recv(sd, response, 3, 0);
     // printf("%s",response);
-    sleep(10);
+   // sleep(10);
 }
-void sendFile(FILE *fp, int sd)
+/*void sendFile(FILE *fp, int sd)
 {
     int checker;
     char info[TRANSFERSIZE];
@@ -90,12 +91,12 @@ void sendFile(FILE *fp, int sd)
         printf("\nSent %s b\n", info);
         bzero(info, TRANSFERSIZE);
     }
-}
-void sendFileBinary(FILE *fp, int sd,long int size)
+}*/
+void sendFile(FILE *fp, int sd,long int size)
 {
     int checker;
     char info[TRANSFERSIZE];
-    FILE *dp=fopen("test.pdf","wb");
+   // FILE *dp=fopen("test.pdf","wb");
     // while(fgets(info,TRANSFERSIZE,fp)!=NULL)
 
     long int readBytes = 0;
@@ -115,13 +116,12 @@ void sendFileBinary(FILE *fp, int sd,long int size)
         printf("\nSent %d b\n", checker);
         printf("\nSent %s b\n", info);
         printf("\nSent %s b || %ld || %ld ||\n", info,readBytes,size);
-        fwrite(info, 1, sizeof(info), dp);
+       // fwrite(info, 1, sizeof(info), dp);
        
         bzero(info, TRANSFERSIZE);
-        usleep(10000);
+   
     } 
-   fread(info, TRANSFERSIZE, 1, fp);
-          fwrite(info, 1, sizeof(info), dp);
+       // fwrite(info, 1, sizeof(info), dp);
            if ((checker = send(sd, info, strlen(info), 0)) == -1)
         {
             perror("[client] Error in sending file");
@@ -129,7 +129,7 @@ void sendFileBinary(FILE *fp, int sd,long int size)
         }
     printf("\nSent %s b || %ld || %ld ||\n", info,readBytes,size);
     bzero(info, TRANSFERSIZE);
-    fclose(dp);
+    //fclose(dp);
 }
 
 int main(int argc, char *argv[])
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
     read (0, buf, sizeof(buf));
     nr=atoi(buf);*/
     FILE *fp;
-    char *fileName = "dad.pdf";
+    char *fileName = "dad3333.ps";
 
     fp = fopen(fileName, "rb");
 
@@ -214,5 +214,3 @@ int main(int argc, char *argv[])
     /* inchidem conexiunea, am terminat */
     close(sd);
 }
-/*dfsdfsdfsd
- */

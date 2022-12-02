@@ -2,8 +2,6 @@
    prin crearea unui thread pentru fiecare client.
    Asteapta un numar de la clienti si intoarce clientilor numarul incrementat.
     Intoarce corect identificatorul din program al thread-ului.
-
-
    Autor: Lenuta Alboaie  <adria@infoiasi.ro> (c)2009
 */
 
@@ -39,34 +37,37 @@ void raspunde(void *);
 void receiveType(int sd, char *typeReceived2)
 {
     char typeReceived[TRANSFERSIZE];
-    int r = recv(sd, typeReceived, min(TRANSFERSIZE,sizeof(typeReceived)), 0);
+    int r = recv(sd, typeReceived, TRANSFERSIZE, 0);
     printf("%s", typeReceived);
     
     if (strcmp(typeReceived, "latex2html") == 0)
     {
-        char *response = "OK";
+        char response[TRANSFERSIZE] = "OK";
         if (send(sd, response, TRANSFERSIZE, 0) == -1)
         {
             perror("[client] Error in sending file");
             exit(1);
         }
+          bzero(response,TRANSFERSIZE);
     }
     else
     {
-        char *response = "NAH";
+        char response[TRANSFERSIZE] = "NAH";
         if (send(sd, response, TRANSFERSIZE, 0) == -1)
         {
             perror("[client] Error in sending file");
             exit(1);
         }
+          bzero(response,TRANSFERSIZE);
     }
+  
     
 }
 void receiveSendFile(int sd)
 {
     char *typeReceived = "";
-   // receiveType(sd, typeReceived);
-    // sleep(1);
+    receiveType(sd, typeReceived);
+   // sleep(1);
     writeRecvInfo(sd, 1);
    // char *response="OK";
     //send(sd,response,TRANSFERSIZE,0);
@@ -74,7 +75,7 @@ void receiveSendFile(int sd)
 void writeRecvInfo(int sd, int isBinary)
 {
     FILE *fp;
-    char *fileName = "dad2.pdf";
+    char *fileName = "testNOU.ps";
     int r;
     char info[TRANSFERSIZE] = {0};
     if ((fp = fopen(fileName, "wb")) == NULL)
@@ -114,7 +115,7 @@ void writeRecvInfo(int sd, int isBinary)
             fprintf(fp, "%s", info);
         fflush(fp);
         bzero(info, TRANSFERSIZE);
-            printf("%ld | %ld",readBytes,answer);
+        printf("%ld | %ld",readBytes,answer);
     }
 }
 int main()
@@ -216,7 +217,6 @@ void raspunde(void *arg)
             {
               printf("[Thread %d]\n",tdL.idThread);
               perror ("Eroare la read() de la client.\n");
-
             } */
 
     char *fromType;
