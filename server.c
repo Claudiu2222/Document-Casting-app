@@ -17,9 +17,10 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <pthread.h>
-#define TRANSFERSIZE 1024
+
+#define TRANSFERSIZE 4096
 /* portul folosit */
-#define PORT 2908
+#define PORT 9000
 
 /* codul de eroare returnat de anumite apeluri */
 extern int errno;
@@ -35,38 +36,85 @@ int min(int a, int b)
 }
 static void *treat(void *); /* functia executata de fiecare thread ce realizeaza comunicarea cu clientii */
 void raspunde(void *);
+void receiveType(int sd, char *typeReceived2)
+{
+    char typeReceived[TRANSFERSIZE];
+    int r = recv(sd, typeReceived, min(TRANSFERSIZE,sizeof(typeReceived)), 0);
+    printf("%s", typeReceived);
+    
+    if (strcmp(typeReceived, "latex2html") == 0)
+    {
+        char *response = "OK";
+        if (send(sd, response, TRANSFERSIZE, 0) == -1)
+        {
+            perror("[client] Error in sending file");
+            exit(1);
+        }
+    }
+    else
+    {
+        char *response = "NAH";
+        if (send(sd, response, TRANSFERSIZE, 0) == -1)
+        {
+            perror("[client] Error in sending file");
+            exit(1);
+        }
+    }
+    
+}
+void receiveSendFile(int sd)
+{
+    char *typeReceived = "";
+   // receiveType(sd, typeReceived);
+    // sleep(1);
+    writeRecvInfo(sd, 1);
+   // char *response="OK";
+    //send(sd,response,TRANSFERSIZE,0);
+}
 void writeRecvInfo(int sd, int isBinary)
 {
     FILE *fp;
-    char *fileName = "index2.html";
+    char *fileName = "dad2.pdf";
     int r;
-    char info[TRANSFERSIZE]={0};
+    char info[TRANSFERSIZE] = {0};
     if ((fp = fopen(fileName, "wb")) == NULL)
     {
         printf("ERR");
         exit(1);
     }
-    while (1)
+    long int size;
+    r = recv(sd, info, TRANSFERSIZE, 0);
+    char *remaining;
+    long answer;
+    info[r]='\0';
+    long int readBytes=0;
+    answer = strtol(info, &remaining, 10);
+    printf("%ld",answer);
+     while (readBytes<answer)
     {
-        r = recv(sd, info, min(TRANSFERSIZE,sizeof(info)), 0);
-        if (r == 0)
+      
+        r = recv(sd, info, TRANSFERSIZE, 0);
+       
+        readBytes+=strlen(info);
+        if (r <= 0)
         {
-           printf("Received %d and in info %d b\n", r,sizeof(info));
+           
+            printf("Received %d and in info %d b\n", r, strlen(info));
             fflush(fp);
             fclose(fp);
-             bzero(info, TRANSFERSIZE);
+            bzero(info, TRANSFERSIZE);
             return;
         }
-        printf("Received %d and in info %d b\n", r,sizeof(info));
-          printf("%s\n", info);
-        //fprintf(fp, "%s", info);
-        if(isBinary==1)
-        fwrite(info,1,sizeof(info),fp);
+        printf("Received %d and in info %d b\n", r, strlen(info));
+        printf("%s\n", info);
+        // fprintf(fp, "%s", info);
+        if (isBinary == 1)
+            fwrite(info, 1, sizeof(info), fp);
         else
-        fprintf(fp, "%s", info);
+            fprintf(fp, "%s", info);
         fflush(fp);
         bzero(info, TRANSFERSIZE);
-           
+            printf("%ld | %ld",readBytes,answer);
     }
 }
 int main()
@@ -154,7 +202,7 @@ static void *treat(void *arg)
     pthread_detach(pthread_self());
     raspunde((struct thData *)arg);
     /* am terminat cu acest client, inchidem conexiunea */
-   
+
     close((intptr_t)arg);
     return (NULL);
 };
@@ -170,7 +218,11 @@ void raspunde(void *arg)
               perror ("Eroare la read() de la client.\n");
 
             } */
-    writeRecvInfo(tdL.cl,0);
+
+    char *fromType;
+    char *toType;
+    receiveSendFile(tdL.cl);
+
     printf("[Thread %d]Mesajul a fost receptionat...%d\n", tdL.idThread, nr);
 
     /*pregatim mesajul de raspuns */
