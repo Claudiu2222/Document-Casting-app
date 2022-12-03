@@ -113,9 +113,9 @@ void sendFile(FILE *fp, int sd,long int size)
             exit(1);
         }
 
-        printf("\nSent %d b\n", checker);
-        printf("\nSent %s b\n", info);
-        printf("\nSent %s b || %ld || %ld ||\n", info,readBytes,size);
+        //printf("\nSent %d b\n", checker);
+        //printf("\nSent %s b\n", info);
+      //  printf("\nSent %s b || %ld || %ld ||\n", info,readBytes,size);
        // fwrite(info, 1, sizeof(info), dp);
        
         bzero(info, TRANSFERSIZE);
@@ -127,7 +127,7 @@ void sendFile(FILE *fp, int sd,long int size)
             perror("[client] Error in sending file");
             exit(1);
         }
-    printf("\nSent %s b || %ld || %ld ||\n", info,readBytes,size);
+   // printf("\nSent %s b || %ld || %ld ||\n", info,readBytes,size);
     bzero(info, TRANSFERSIZE);
     //fclose(dp);
 }
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
     read (0, buf, sizeof(buf));
     nr=atoi(buf);*/
     FILE *fp;
-    char *fileName = "dad3333.ps";
+    char *fileName = "dad.pdf";
 
     fp = fopen(fileName, "rb");
 

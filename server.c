@@ -1,10 +1,3 @@
-/* servTCPConcTh2.c - Exemplu de server TCP concurent care deserveste clientii
-   prin crearea unui thread pentru fiecare client.
-   Asteapta un numar de la clienti si intoarce clientilor numarul incrementat.
-    Intoarce corect identificatorul din program al thread-ului.
-   Autor: Lenuta Alboaie  <adria@infoiasi.ro> (c)2009
-*/
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -17,29 +10,28 @@
 #include <pthread.h>
 
 #define TRANSFERSIZE 4096
-/* portul folosit */
-#define PORT 9000
 
-/* codul de eroare returnat de anumite apeluri */
+#define PORT 9000
+int fileNr;
 extern int errno;
 
-typedef struct thData
+typedef struct threadData
 {
-    int idThread; // id-ul thread-ului tinut in evidenta de acest program
-    int cl;       // descriptorul intors de accept
-} thData;
+    int idThread; // id-ul thread-ului
+    int cl;       // descriptorul returnat de accept()
+} threadData;
 int min(int a, int b)
 {
     return a < b ? a : b;
 }
-static void *treat(void *); /* functia executata de fiecare thread ce realizeaza comunicarea cu clientii */
-void raspunde(void *);
+static void *treat(void *); /* functia executata de fiecare thread*/
+void respond(void *);
 void receiveType(int sd, char *typeReceived2)
 {
     char typeReceived[TRANSFERSIZE];
     int r = recv(sd, typeReceived, TRANSFERSIZE, 0);
     printf("%s", typeReceived);
-    
+
     if (strcmp(typeReceived, "latex2html") == 0)
     {
         char response[TRANSFERSIZE] = "OK";
@@ -48,7 +40,7 @@ void receiveType(int sd, char *typeReceived2)
             perror("[client] Error in sending file");
             exit(1);
         }
-          bzero(response,TRANSFERSIZE);
+        bzero(response, TRANSFERSIZE);
     }
     else
     {
@@ -58,24 +50,24 @@ void receiveType(int sd, char *typeReceived2)
             perror("[client] Error in sending file");
             exit(1);
         }
-          bzero(response,TRANSFERSIZE);
+        bzero(response, TRANSFERSIZE);
     }
-  
-    
 }
 void receiveSendFile(int sd)
 {
     char *typeReceived = "";
     receiveType(sd, typeReceived);
-   // sleep(1);
-    writeRecvInfo(sd, 1);
-   // char *response="OK";
-    //send(sd,response,TRANSFERSIZE,0);
+    // sleep(1);
+    writeRecvInfo(sd);
+    // char *response="OK";
+    // send(sd,response,TRANSFERSIZE,0);
 }
-void writeRecvInfo(int sd, int isBinary)
+void writeRecvInfo(int sd)
 {
     FILE *fp;
-    char *fileName = "testNOU.ps";
+    char fileName[50];
+    sprintf(fileName, "codNumars%d.pdf", fileNr);
+    fileNr++;
     int r;
     char info[TRANSFERSIZE] = {0};
     if ((fp = fopen(fileName, "wb")) == NULL)
@@ -87,19 +79,19 @@ void writeRecvInfo(int sd, int isBinary)
     r = recv(sd, info, TRANSFERSIZE, 0);
     char *remaining;
     long answer;
-    info[r]='\0';
-    long int readBytes=0;
+    info[r] = '\0';
+    long int readBytes = 0;
     answer = strtol(info, &remaining, 10);
-    printf("%ld",answer);
-     while (readBytes<answer)
+    printf("%ld", answer);
+    while (readBytes < answer)
     {
-      
+
         r = recv(sd, info, TRANSFERSIZE, 0);
-       
-        readBytes+=strlen(info);
+
+        readBytes += r;
         if (r <= 0)
         {
-           
+
             printf("Received %d and in info %d b\n", r, strlen(info));
             fflush(fp);
             fclose(fp);
@@ -109,13 +101,12 @@ void writeRecvInfo(int sd, int isBinary)
         printf("Received %d and in info %d b\n", r, strlen(info));
         printf("%s\n", info);
         // fprintf(fp, "%s", info);
-        if (isBinary == 1)
-            fwrite(info, 1, sizeof(info), fp);
-        else
-            fprintf(fp, "%s", info);
+
+        fwrite(info, 1, r, fp);
+
         fflush(fp);
         bzero(info, TRANSFERSIZE);
-        printf("%ld | %ld",readBytes,answer);
+        printf("%ld | %ld", readBytes, answer);
     }
 }
 int main()
@@ -167,7 +158,7 @@ int main()
     while (1)
     {
         int client;
-        thData *td; // parametru functia executata de thread
+        threadData *td; // parametru functia executata de thread
         int length = sizeof(from);
 
         printf("[server]Asteptam la portul %d...\n", PORT);
@@ -186,7 +177,7 @@ int main()
         // int idThread; //id-ul threadului
         // int cl; //descriptorul intors de accept
 
-        td = (struct thData *)malloc(sizeof(struct thData));
+        td = (struct threadData *)malloc(sizeof(struct threadData));
         td->idThread = i++;
         td->cl = client;
 
@@ -196,23 +187,23 @@ int main()
 };
 static void *treat(void *arg)
 {
-    struct thData tdL;
-    tdL = *((struct thData *)arg);
+    struct threadData tdL;
+    tdL = *((struct threadData *)arg);
     printf("[thread]- %d - Asteptam mesajul...\n", tdL.idThread);
     fflush(stdout);
     pthread_detach(pthread_self());
-    raspunde((struct thData *)arg);
+    respond((struct threadData *)arg);
     /* am terminat cu acest client, inchidem conexiunea */
 
     close((intptr_t)arg);
     return (NULL);
 };
 
-void raspunde(void *arg)
+void respond(void *arg)
 {
     int nr, i = 0;
-    struct thData tdL;
-    tdL = *((struct thData *)arg);
+    struct threadData tdL;
+    tdL = *((struct threadData *)arg);
     /* if (read (tdL.cl, &nr,sizeof(int)) <= 0)
             {
               printf("[Thread %d]\n",tdL.idThread);
