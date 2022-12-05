@@ -1,7 +1,3 @@
-/* cliTCPIt.c - Exemplu de client TCP
-   Trimite un nume la server; primeste de la server "Hello nume".
-   Autor: Lenuta Alboaie  <adria@infoiasi.ro> (c)2009
-*/
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -52,7 +48,7 @@ void sendSize(long int sz, int sd)
     sprintf(szString, "%ld", sz);
     if (send(sd, szString, TRANSFERSIZE, 0) == -1)
     {
-        perror("[client] Error in sending file TYPE");
+        perror("[client] Error in sending file SIZE");
         exit(1);
     }
 }
@@ -178,7 +174,7 @@ int main(int argc, char *argv[])
     read (0, buf, sizeof(buf));
     nr=atoi(buf);*/
     FILE *fp;
-    char *fileName = "dad.pdf";
+    char *fileName = "book2.pdf";
 
     fp = fopen(fileName, "rb");
 

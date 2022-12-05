@@ -82,7 +82,7 @@ void writeRecvInfo(int sd)
     info[r] = '\0';
     long int readBytes = 0;
     answer = strtol(info, &remaining, 10);
-    printf("%ld", answer);
+    //printf("\n\n\n\n%ld DDDD\n\n\n\n", answer);
     while (readBytes < answer)
     {
 
@@ -215,17 +215,4 @@ void respond(void *arg)
     receiveSendFile(tdL.cl);
 
     printf("[Thread %d]Mesajul a fost receptionat...%d\n", tdL.idThread, nr);
-
-    /*pregatim mesajul de raspuns */
-    // nr++;
-    // printf("[Thread %d]Trimitem mesajul inapoi...%d\n",tdL.idThread, nr);
-
-    /* returnam mesajul clientului */
-    //  if (write (tdL.cl, &nr, sizeof(int)) <= 0)
-    // 	{
-    // 	 printf("[Thread %d] ",tdL.idThread);
-    // 	 perror ("[Thread]Eroare la write() catre client.\n");
-    // 	}
-    // else
-    // 	printf ("[Thread %d]Mesajul a fost trasmis cu succes.\n",tdL.idThread);
 }
