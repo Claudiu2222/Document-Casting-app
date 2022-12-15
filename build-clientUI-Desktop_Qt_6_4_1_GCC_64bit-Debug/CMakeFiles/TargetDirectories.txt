@@ -1,0 +1,9 @@
+/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/clientUI.dir
+/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/edit_cache.dir
+/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/rebuild_cache.dir
+/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/list_install_components.dir
+/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/install.dir
+/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/install/local.dir
+/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/install/strip.dir
+/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/clientUI_autogen_timestamp_deps.dir
+/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/clientUI_autogen.dir
