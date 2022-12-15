@@ -89,9 +89,9 @@ void MainWindow::sendFileInfo()//FILE *fp, int sd,long int size
         ::sendFile(fp, sd, sizeOfFile);
        // sleep(10);
         ::extractTypes(conversionType,fileType1,fileType2);
-       //::writeReceivedFile(sd,savePath,filePath,fileType2,fileNr);
-   ::close(sd);
-        ui->infoMessage->setText("FILE WAS SUCCESSFULY CONVERTED");
+        ::writeReceivedFile(sd,savePath,filePath,fileType2,fileNr);
+        ::close(sd);
+        ui->infoMessage->setText("FILE TRANSFER COMPLETED");
 }
 int MainWindow::connectToServer(){
 
@@ -125,8 +125,7 @@ int MainWindow::connectToServer(){
         perror("[client]Eroare la connect().\n");
         return 2;
     }
-
-    ui->infoMessage->setText("PLEASE WAIT FOR YOUR FILE TO BE CONVERTED");
+    ui->infoMessage->setText("PLEASE WAIT");
     ui->infoMessage->setStyleSheet("color:green;border:0px;");
    // ui->connectBtn->setDisabled(true);
     ui->selectFileButton->setDisabled(false);

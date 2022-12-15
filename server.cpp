@@ -90,20 +90,11 @@ void convertFile(char *conversionType, char *fileType1, char *fileType2, char *f
     utilitary[j] = '\0';
 
     sprintf(command, "%s %s %s", utilitary, receivedFilePath, convertedFilePath);
-    pid_t pid = fork();
-  if (pid == 0) {
-    // Child process
-    // Perform the system call to convert the file
     system(command);
-  } else {
-    // Parent process
-    // Wait for the child process to end before sending more information to the client
-    wait(NULL);
-   
     // char *response="OK";
     // send(sd,response,TRANSFERSIZE,0);
     printf("---\n%s\n----", fileHash);
-    printf("\n\n\n%s\n\n\n", command);}
+    printf("\n\n\n%s\n\n\n", command);
     // printf("DD |%s|--|%s| DD\n", fileType1, fileType2);
 }
 void processFile(int sd)
@@ -136,13 +127,21 @@ void processFile(int sd)
   ////  
   ////  printf("D%s\n", convertedFilePath);
    // sendConfirmation(sd,"OK");
-  //  sendFileSize(fp, sd);
-
-    //sendFile(fp, sd);
+   printf("\n|%s|\n", convertedFilePath);
+  
+   if ((fp = fopen(convertedFilePath, "rb")) == NULL)
+    {
+        printf("ERROR OPENING FILE");
+        exit(1);
+    }
+    long int size=sendFileSize(fp, sd);
+    printf("SIZE:%ld\n",size);
+    sendFile(fp, sd,size);
     // char *response="OK";
     // send(sd,response,TRANSFERSIZE,0);
     //printf("---\n%s\n----", fileHash);
 
+    //sleep(1);
     // printf("DD |%s|--|%s| DD\n", fileType1, fileType2);
 }
 
