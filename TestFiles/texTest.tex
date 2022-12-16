@@ -1,0 +1,157 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=2cm, right=2cm]{geometry}
+
+\usepackage{graphicx}
+\graphicspath{ {./imagini} }
+
+\oddsidemargin -1cm
+\evensidemargin  -1cm
+\topmargin -3 cm
+
+\textheight 24.5  cm
+\title{Tema Grafuri 1}
+\author{Popoiu Claudiu-Daniel 2A4, Gulica Silvian 2A4}
+\date{October 2022}
+
+\begin{document}
+
+\maketitle
+
+\textbf{1.a)} Pentru a raspunde la intrebare vom analiza toate cazurile posibile:
+ \\  \underline{Cazul 1.} Pentru fiecare statie, intervalele tramvaielor ce opresc in aceeasi statie se intersecteaza \textbf{cel putin}  doua cate doua:
+\par Fie $S_{i}\subseteq V$ submultimile tuturor nodurilor din $G$ ce contin $station_{i}$, unde $0\leq i \leq n$, iar $n=$numarul de statii. 
+ Subgraful indus de orice $S_{i}$ va contine un singur element conex datorita faptului ca toate intervalele tripletelor ce contin $station_{i}$ se intersecteaza cel putin doua cate doua, deci nu exista noduri izolate in subgraf. Orice doua noduri u si v, unde $u,v\in S_{i}$, sunt adiacente sau au cel putin un drum de la unul la celalalt. Astfel fiecare subgraf indus de $S_{i}$ va reprezenta exact un element conex in graful G, deci numarul de elemente conexe va fi egal cu numarul de statii.
+\\ \\ \underline{Cazul 2.} Pentru fiecare statie, exista tramvaie al caror interval (start, end) nu se intersecteaza deloc cu intervalele celorlaltor tramvaie ce opresc in aceeasi statie:
+   \par In acest caz, pentru orice $S_{i}$, subgraful indus de $S_{i}$ va avea fie o componenta conexa (in cazul in care exista un singur tramvai care are oprire in statia $i$), fie mai multe (in cazul in care exista mai multe tramvaie ce opresc in statia $i$ si cel putin unul dintre ele nu se intalneste cu celelalte intr-un interval comun de timp) deoarece nu vom mai avea cel putin un drum intre oricare doua noduri u si v din $S_{i}$(unele noduri vor fi izolate sau se vor afla in elemente conexe diferite). Astfel, numarul de elemente conexe din G va fi $\geq$ numarul de statii.
+\\ \\ \underline{Cazul 3.} Singurul caz in care am putea avea mai putine elemente connexe decat numarul de statii ar fi ca doua noduri reprezentate de tripletele ($start_{i}$,$station_{i}$,$end_{i}$) si ($start_{j}$,$station_{j}$,$end_{j}$) cu $i\neq j$ si $station_{i}\neq station_{j}$ sa fie adiacente, dar conform cerintei problemei doua noduri nu sunt adiacente daca nu au $station_{i}=station_{j}$, deci este imposibil ca numarul elementelor conexe sa fie mai mic decat numarul statiilor. 
+\par Din \underline{Cazul 1} + \underline{Cazul 2} +  \underline{Cazul 3} $\Rightarrow$ numarul de elemente conexe din G este cel putin numarul de statii.
+\\ \par\textbf{1.b)} \underline{Numarul de clica al lui G:} $\omega(G)$ este numărul de noduri dintr-o clică maximă în G. Din enuntul problemei stim faptul ca toate nodurile care reprezinta tramvaiele aflate in aceeasi statie intr-un interval comun de timp vor fi adiacente. Astfel, pentru fiecare statie, subgraful indus de $S_{i}$(definit mai sus) va contine una sau mai multe clici. De exemplu daca 3 tramvaie se afla in statia $i$ la ora 15:00, subgraful indus de $S_{i}$ va contine o 3-clica, daca la ora 17:00 in aceeasi statie se afla 5 tramvaie, subgraful indus va contine si o 5-clica. Prin urmare, numarul maxim de tramvaie ce se afla in acelasi timp intr-o aceeasi statie va fi reprezentat in graful G ca o clica de cardinal maxim. Raspunsul la intrebarea primariei va fi $\omega(G)$.
+\\ \par \textbf{1.c)} Un circuit indus este un circuit pentru care nu exista doua noduri conectate printr-o muchie daca muchia respectiva nu face parte din circuit. Sa presupunem prin reducere la absurd ca exista circuite induse $\geq$ 4. Acest lucru ar putea fi posibil pentru tramvaie ale caror intervale se intersecteaza doua cate doua (tramvaiul 1 e in statie cu tramvaiul 2, tramvaiul 1 pleaca si vine tramvaiul 3, in statie raman tramvaiul 2 si 3, etc.). In final, pentru a obtine un circuit indus, nodul k ar trebui sa fie adiacent cu nodul 1, dar acest lucru nu este posibil deoarece $start_{k}>end_{i}$. Daca nodul k e adiacent cu nodul 1 inseamna ca nodul k va fi adiacent si cu celelalte noduri, formandu-se o clica. Astfel, vor exista si muchii intre noduri care nu fac parte din circuit, deci nu exista circuite induse $\geq$ 4.
+
+
+\centerline{
+\includegraphics[scale=0.4]{graf1c.jpg}
+}
+\newpage
+ \textbf{1.d)} Pentru operatia (*), putem folosi un \textbf{priority queue} $visitedNeighbors$ in care stocam numarul de vecini ai fiecarui nod. Prin operatia $max$ se intelege ca varful cozii este numarul maxim de vecini pe care ii poate avea un nod. Structura $\pi$ este un array, iar restul structurilor ( $S$, $V$, $N_G$) sunt $set$-uri.
+  \par \textbf{1.e)} Pentru a afla $\omega(G)$ folosim proprietatea si algoritmul folosit mai sus, astfel ca in algoritm putem inlocui partea in care se cauta numarul de vecini cu $visitedNeighbors[v]$=$(N_{G_v}(v)+1)$. La final max $visitedNeighbors=\omega(G)$.
+  
+ \par\textbf{2.a)} Fie G un graf \textbf{complet} oarecare. Orice orientare \textbf{aciclica} a lui G trebuie sa contina o ordonare topologica \textbf{unica} in care fiecare nod va avea gradul interior strict crescator. Demonstratie: \\
+ \par Daca am avea am avea o orientare aciclica oarecare a lui G, $\vec{G}$ , cu $|V| =n$, aceasta va avea o ordonare topologica $k_{1},k_{2},k_{3},k_{4},...,k_{n}$. Nodul $k_{1}$ va avea gradul interior 0 deoarece digraful este aciclic ( daca nu ar exista un nod cu grad interior 0, iar toate nodurile ar avea gradul interior $\geq1$, atunci inseamna ca prin nodul din care plecam initial ne vom intoarce mai tarziu prin alt arc, formandu-se astfel un circuit), iar din acest nod vor pleca ($n-1-gradInterior(k_{1})$) arce. Nodul $k_{2}$ nu poate avea alt grad interior decat gradul nodului $k_{2-1} + 1$ deoarece daca $k_{2}$ ar avea, de exemplu, gradul interior 3, atunci ar trebui sa existe un arc din alte doua noduri din submultimea {$k_{3},k_{4},...,k_{n}$} spre $k_{2}$, dar acest lucru nu este posibil deoarece aceste noduri sunt pozitionate dupa $k_{2}$ in ordonarea topologica. Din $k_{2}$ vor pleca ($n-1-gradInterior(k_{2})$) arce. Aplicand acelasi rationament pentru restul nodurilor obtinem faptul ca exista o singura ordonare topologica pentru orice orientare aciclica a grafului complet G in care toate gradele interioare ale nodurilor sunt distincte si crescatoare \textbf{(1)}.
+ \par Observam faptul ca, pentru a pastra proprietatea de digraf aciclic, putem aplica $reverse$ doar intre 2 noduri u, v, unde $u,v\in \vec{G}$, care au $|d^{-}_{\vec{G}}(u)-d^{-}_{\vec{G}}(v)|=1$ \textbf{(2)}. In acest caz, arcul dintre u si v poate fi inversat fara a afecta conditia de aciclitate (exemplu pentru \textbf{Figura 1}, alegem nodurile $n_{3}$ si $n_{4}$ care au modulul diferentei gradelor interioare = 1, aplicam reverse pe arcul dintre cele doua si obtinem digraful din \textbf{Figura 2}. Acest digraf pastreaza proprietatea de digraf aciclic si admite o ordonare topologica unica cu gradele interioare crescatoare si distincte). Acest lucru este posibil pentru ca cele doua noduri isi modifica gradele interioare cu 1, aparitia lor in ordinea topologica va putea fi interschimbata fara probleme. Daca, in schimb, incercam sa aplicam $reverse$ pe doua noduri care au modulul diferentei gradelor interioare $>1$ apar probleme pentru ca, pe langa arcul dintre cele doua, mai exista cel putin un alt arc din alt nod spre unul dintre cele doua noduri selectate. In acest caz, nu va mai exista nicio ordonare topologica, iar digraful va fi ciclic. Gradele interioare ale nodurilor nu vor mai fi strict crescatoare(exemplu pentru digraful din \textbf{Figura 1}: aplicam reverse arcului $n_{2}n_{4}$ si obtinem digraful din \textbf{Figura 3}). Digraful din \textbf{Figura 3} nu admite o ordonare topologica deci nu este aciclic.
+ \par Revenind la proprietatea (P) ce trebuie demonstrata, avem $\vec{G'}$ si $\vec{G''}$. Ambele sunt orientari aciclice ale lui G deci indeplinesc si proprietatile demonstrate mai sus ( \textbf{(1)} si \textbf{(2)} ). Practic $\vec{G''}$ este o permutare a lui $\vec{G'}$, deci $\vec{G''}$ se va forma prin aplicarea functiei $reverse$ asupra arcelor din $A$, unde $A=A'-A''$. Daca $A$ ar avea doar arce ce fac legatura in $\vec{G'}$ intre noduri ce au modulul diferentei gradelor interioare $>1$, atunci s-ar strica ordinea topologica conform demonstratiei de mai sus, deci $\vec{G''}$ nu ar mai fi aciclic!   
+ Astfel, in $A$ vom avea cel putin un $e$ care face legatura intre doua noduri cu modulul diferentei gradelor interioare $=1$ (in \textbf{Figura 4} avem digraful din \textbf{Figura 1} asupra caruia am aplicat un reverse asupra unor noduri cu diferenta $>1$, $n_{2}n_{4}$, dar si asupra unuia cu diferenta $=1$, $n_{2}n_{3}$) si asupra caruia putem efectua o operatie $reverse$ in $\vec{G'}$ fara a strica proprietatea de aciclitate (conform \textbf{(2)}).
+
+
+\begin{frame}{}
+    \begin{figure}[ht]
+    \centering
+        \begin{minipage}[b]{0.23\linewidth}
+           
+         
+            \caption{}
+           
+           \includegraphics[width=\textwidth]{graf2a1.jpg}
+           
+        \end{minipage}
+        \hspace{0.2cm}
+        \begin{minipage}[b]{0.23\linewidth}
+          
+             \caption{}
+            
+            \includegraphics[width=\textwidth]{graf2a4.jpg}
+           
+        \end{minipage}
+          \hspace{0.2cm}
+         \begin{minipage}[b]{0.23\linewidth}
+          
+             \caption{}
+            
+            \includegraphics[width=\textwidth]{graf2a3.jpg}
+           
+        \end{minipage}
+         \hspace{0.2cm}
+         \begin{minipage}[b]{0.23\linewidth}
+          
+             \caption{}
+            
+            \includegraphics[width=\textwidth]{graf2a2.jpg}
+           
+        \end{minipage}
+
+    \end{figure}
+\end{frame}
+\par\textbf{2.b)}  ${\vec{K_{n}'}}$ si ${\vec{K_{n}''}}$ sunt doua orientari aciclice ale lui $K_{n}$, deci au acelasi graf suport. Astfel, pornind de la $K_{n}$ putem ajunge la oricare dintre orientarile aciclice ${\vec{K_{n}'}}$ sau ${\vec{K_{n}''}}$ prin schimbarea fiecarei muchii din graful initial cu un arc. Fie u si v doua noduri, unde $u,v\in K_{n}$, muchia dintre ele se poate transforma fie in arcul $uv$ fie in arcul $vu$. Graful $K_{n}$ este complet deci are $\frac{n*(n-1)}{2}$ muchii. Asadar, orientarile aciclice vor avea $\frac{n*(n-1)}{2}$ arce. Deoarece nodurile din ${\vec{K_{n}'}}$ si ${\vec{K_{n}''}}$ au aceleasi adiacente in $K_{n}$ si acelasi numar de arce, putem aplica operatia $reverse$ pe prima orientare aciclica pana cand o obtinem pe cea de a doua. In cel mai bun caz, cele doua difera doar printr-un arc deci se face doar o operatie de $reverse$, iar in cel mai rau caz toate arcele au directii diferite in cele doua orientari deci se aplica  $\frac{n*(n-1)}{2}$ operatii de $reverse$. 
+\\
+\par\textbf{2.c)} Fie G un graf cu n noduri ce nu este complet si $\vec{G}$ o orientare aciclica oarecare a acestuia. Fiind aciclica, aceasta orientare admite ordonari topologice. Calculam una dintre aceste ordonari. La fel ca la subpunctul \textbf{a}, primul nod al ordonarii trebuie sa aiba gradul interior 0. Daca acest nod ar avea gradul $<> 0$, atunci inseamna ca ne vom intoarce in el prin alt arc, deci ar exista un circuit (lucru ce ar contrazice faptul ca  $\vec{G}$ este o orientare aciclica). Asadar, avem ordonarea topologica $k_{1},k_{2},k_{3},k_{4},...,k_{n}$ pentru aceasta orientare aciclica. Pentru a obtine o orientare aciclica cu graful suport $K_{n}$ vom adauga arce de la oricare nod $k_{i}$, $1\leq i \leq (n-1)$ la toate nodurile ce se afla in dreapta lui in orientarea topologica, doar daca nu exista deja un arc intre ele. Dupa ce am adaugat arcele necesare, ordonarea topologica nu se va schimba, iar toate gradele interioare ale nodurilor din ordonare vor fi strict crescatoare si din fiecare nod $k_{i}$ cu $1\leq i \leq n$ vor pleca $(n-1-gradInterior(k_{i}))$ arce. Astfel, vom obtine o noua orientare aciclica pentru care vom avea graful suport $K_{n}$.
+\\ Exemplu: Pentru digraful aciclic din \textbf{Figura 5} cu $n=4$ selectam o ordonare topologica oarecare : 1, 3, 2, 4. Din nodul 1 putem adauga doar un arc: spre nodul 4. Din nodul 3 nu putem adauga arce deoarece are deja $gradInterior+gradExterior=(n-1)$. Din nodul 2 putem adauga doar un arc: spre nodul 4. Nodul 4 va avea, de asemenea, $gradInterior+gradExterior=(n-1)$. Obtinem digraful din \textbf{Figura 6}, a carui ordonare topologica nu se schimba: 1,3,2,4. Aceasta ordonare indeplineste conditiile demonstrate la subpunctul \textbf{a}, deci digraful nou este aciclic si are graful suport $K_{n}$
+\begin{frame}{}
+ \begin{figure}[ht]
+ \centering
+   \begin{minipage}[b]{0.23\linewidth}
+           
+         
+            \caption{}
+           
+           \includegraphics[width=\textwidth]{graf2c1.jpg}
+           
+        \end{minipage}
+        \hspace{0.6cm}
+  \begin{minipage}[b]{0.20\linewidth}
+           
+         
+            \caption{}
+           
+           \includegraphics[width=\textwidth]{graf2c2.jpg}
+           
+        \end{minipage}
+\end{figure}
+\end{frame}
+\\
+  \par\textbf{3.} Algoritmul propus de student \textit{nu este corect}. Pentru a arata ca intr-adevar algoritmul da gres in a ne cauta drumul minim, urmeaza sa prezentam un contraexemplu. Fie urmatorul digraf \textit{G = (V, E)} ce contine arce cu cost negativ(\textbf{Figura 7}). Cel mai scurt drum in acest digraf este drumul $x_4\to x_1 \to x_2 \to x_3$. Totusi, ruland un algoritm Dijkstra, fara a implementa modificarile propuse de student, obtine urmatorul rezultat: $x_4 \to x_1 \to x_3$, drum de cost 5, care dupa cum se vede, nu este drumul de cost minim. Astfel, se demonstreaza
+  ca algoritmul nu functioneaza pe digrafuri cu arce de cost negativ. Sa implementam algoritmul propus de student. Dupa cum se observa in \textbf{Figura 8}, gasim o constanta $c \geq$ \textit{cel mai mic cost al arcelor}, care in cazul nostru este \textit{7}, deoarece cel mai mic cost al arcelor este \textit{-7}. 
+  Sa rulam acum algoritmul Dijkstra pe digraful nou obtinut. Dupa cum se vede, se obtine acelasi rezultat, adica drumul $x_4 \to x_1 \to x_3$, totusi din \textbf{Figura 8}, se mai observa ca drumul de cost minim initial (adica $x_4\to x_1 \to x_2 \to x_3$) s-a transformat intr-un drum oarecare, care nu mai poate indeplini conditia initiala. Astfel se demonstreaza ca algoritmul propus de student nu este corect si mai mult decat atat, transforma drumul de cost minim intr-un drum oarecare.
+
+\begin{frame}{}
+ \begin{figure}[ht]
+ \centering
+   \begin{minipage}[b]{0.30\linewidth}
+           
+         
+            \caption{}
+           
+           \includegraphics[width=\textwidth]{graf3.jpg}
+           
+        \end{minipage}
+        \hspace{0.3cm}
+  \begin{minipage}[b]{0.30\linewidth}
+           
+         
+            \caption{}
+           
+           \includegraphics[width=\textwidth]{graf_dijks.jpeg}
+           
+        \end{minipage}
+\end{figure}
+\end{frame}
+\\
+
+
+\textbf{4.} Asa cum am vazut la exercitiul anterior, algoritmul lui Dijkstra intampina probleme atunci cand exista arce de cost negativ in digraf. Aceste probleme apar datorita faptului ca, odata ce algoritmul gaseste un drum minim pana la un nod, nu va mai verifica daca exista un drum mai scurt pana la acel nod. De exemplu, dupa cum am putut vedea din \textbf{Figura 7}, daca plecam din nodul $x_{4}$ algoritmul va gasi drumul minim  $x_4 \to x_1 \to x_3$ de cost 5, desi exista un drum mai scurt si anume $x_4 \to x_1 \to x_2 \to x_3$
+de cost 0. Algoritmul nu are cum sa stie faptul ca undeva in digraf exista un arc de cost negativ care va reduce costul total al drumului. Daca, in schimb, toate arcele negative pornesc din sursa $s$, algoritmul nu va fi afectat. Acest lucru este datorat faptului ca algoritmul Dijkstra este un algoritm de tip greedy si va selecta mereu arcele cu costul minim. Orice drum minim din $s$ la orice alt nod al grafului nu va fi afectat deoarece nici costul total nu va fi afectat de un arc cu cost negativ intalnit mai tarziu (pentru ca inafara de cele care pleaca din s, nu vor exista altele). Asadar, dupa ce se trece prin arcele negative ce pornesc din sursa, in urmatoarele iteratii algoritmul va intalni doar arce cu cost $\geq0$, deci costurile minime nu vor mai putea fi reduse, ci doar vor creste. Astfel, stim ca odata ce algoritmul gaseste drumul minim de la sursa la un nod oarecare, atunci nu va mai exista un alt drum mai scurt. Exemplu in \textbf{Figura 9}: daca $x_4$ este sursa noastra, toate drumurile minime de la $x_4$ la restul nodurilor vor fi corecte pentru ca nu mai exista alte arce cu cost negativ ce ar putea fi parcurse in urmatoarele iteratii ale algoritmului si care ar reduce costul total al drumului minim, deci este garantat ca costul drumurilor va fi in crestere. 
+ \begin{figure}[ht]
+ \centering
+   \begin{minipage}[b]{0.35\linewidth}
+           
+         
+            \caption{}
+           
+           \includegraphics[width=\textwidth]{graf4.jpg}
+           
+        \end{minipage}
+        \end{figure}
+
+
+\textbf{BONUS)} Pornind de la proprietatea descrisa la exercitiul 1, pentru orice $1\leq i\leq n$, $x_i$ creeaza cu vecinatatea lui un graf $G_i$ complet. Daca $G_i$ este un subgraf al lui $G$, atunci $N_{G_i}(x_i)$ este o clica in $G$. Daca $G_i$ nu este un subgraf al lui $G$ atunci nu se admite o clica in $G$ asupra vecinatatii lui $x_i$.
+\end{document}

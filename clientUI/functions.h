@@ -6,11 +6,10 @@
 
 void verifyIfValid(QLineEdit* pathOfFile, QLineEdit* pathOfSaveFolder, QPushButton* convertFileBtn, QComboBox* selectTypeBox);
 void connectSignalsFile(QLineEdit* pathOfFile, QLineEdit* pathOfSaveFolder, QPushButton* convertFileBtn, QComboBox* selectTypeBox );
-
 void extractFileHash(char* fileHash);
 void getFileHash(char* fileName,char * fileHash);
 void sendFileHash(int sd,char* fileName);
-
+int receiveConfirmation(int sd);
 void sendType(int sd,char *fileTypes);
 
 

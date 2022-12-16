@@ -13,12 +13,13 @@ class MainWindow : public QMainWindow
 
 public:
 
-   void connectFileDialogsToBtn();
+   void connectFileDialogsToBtns();
    int connectToServer();
    void configureUi();
 
    void closeEvent(QCloseEvent *event);
-   void sendFileInfo();//FILE *fp, int sd, char* fileName
+   void convertFile();
+
    MainWindow(QWidget *parent = nullptr);
    ~MainWindow();
 

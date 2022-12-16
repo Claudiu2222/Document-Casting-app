@@ -28,12 +28,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     this->setFocus();
     configureUi();
-    connectFileDialogsToBtn();
-    //QObject::connect(ui->connectBtn, &QPushButton::clicked,this,&MainWindow::connectToServer);
+    connectFileDialogsToBtns();
+
     connectSignalsFile(ui->pathOfFile,ui->pathOfSaveFolder,ui->convertFileBtn,ui->selectTypeBox);
-    QObject::connect(ui->convertFileBtn, &QPushButton::clicked,this,&MainWindow::sendFileInfo);
+    QObject::connect(ui->convertFileBtn, &QPushButton::clicked,this,&MainWindow::convertFile);
 }
-void MainWindow::connectFileDialogsToBtn(){
+void MainWindow::connectFileDialogsToBtns(){
 
     QLineEdit *lineEditPathFile = ui->pathOfFile;
     QLineEdit *lineEditPathFolder = ui->pathOfSaveFolder;
@@ -53,45 +53,43 @@ void MainWindow::connectFileDialogsToBtn(){
     });
 
 }
-void MainWindow::sendFileInfo()//FILE *fp, int sd,long int size
+void MainWindow::convertFile()
 {
-        if(connectToServer()==2)
-            return;
+    if(connectToServer()==2)
+        return;
 
-        FILE *fp;
-        char filePath[TRANSFERSIZE];
-        char savePath[TRANSFERSIZE];
-        char *response = {0};
-        char conversionType[TRANSFERSIZE];
-        char fileType1[10];
-        char fileType2[10];
-        long int sizeOfFile;
-        strcpy(filePath,ui->pathOfFile->text().toUtf8().data());
-        strcpy(conversionType,ui->selectTypeBox->currentText().toUtf8().data());
-        strcpy(savePath,ui->pathOfSaveFolder->text().toUtf8().data());
-        fp = fopen(filePath, "rb");
+    FILE *fp;
+    char filePath[TRANSFERSIZE];
+    char savePath[TRANSFERSIZE];
+    char *response = {0};
+    char conversionType[TRANSFERSIZE];
+    char fileType1[10];
+    char fileType2[10];
+    long int sizeOfFile;
+    strcpy(filePath,ui->pathOfFile->text().toUtf8().data());
+    strcpy(conversionType,ui->selectTypeBox->currentText().toUtf8().data());
+    strcpy(savePath,ui->pathOfSaveFolder->text().toUtf8().data());
+    fp = fopen(filePath, "rb");
 
-        if (fp == NULL)
-            {
-                perror("[client]Error in opening fileName file");
-                exit(1);
-            }
+    if (fp == NULL)
+    {
+        perror("[client]Error in opening file");
+        exit(1);
+    }
 
 
-        sendType(sd,conversionType);
-      //  sleep(5);
+    sendType(sd,conversionType);
+    sendFileHash(sd,filePath);
 
-        sendFileHash(sd,filePath);
-        sizeOfFile= ::sendFileSize(fp,sd);
+    if(receiveConfirmation(sd)==0)
+    {
+    sizeOfFile= ::sendFileSize(fp,sd);
+    ::sendFile(fp, sd, sizeOfFile);}
 
-       // sleep(5);
-
-        ::sendFile(fp, sd, sizeOfFile);
-       // sleep(10);
-        ::extractTypes(conversionType,fileType1,fileType2);
-        ::writeReceivedFile(sd,savePath,filePath,fileType2,fileNr);
-        ::close(sd);
-        ui->infoMessage->setText("FILE TRANSFER COMPLETED");
+    ::extractTypes(conversionType,fileType1,fileType2);
+    ::writeReceivedFile(sd,savePath,filePath,fileType2,fileNr);
+    ::close(sd);
+    ui->infoMessage->setText("FILE TRANSFER COMPLETED");
 }
 int MainWindow::connectToServer(){
 
@@ -125,13 +123,7 @@ int MainWindow::connectToServer(){
         perror("[client]Eroare la connect().\n");
         return 2;
     }
-    ui->infoMessage->setText("PLEASE WAIT");
-    ui->infoMessage->setStyleSheet("color:green;border:0px;");
-   // ui->connectBtn->setDisabled(true);
-    ui->selectFileButton->setDisabled(false);
-    ui->selectFolderButton->setDisabled(false);
-    ui->selectTypeBox->setDisabled(false);
-
+     ui->infoMessage->setStyleSheet("color:green;border:0px;");
     return 1;
 }
 void MainWindow::configureUi(){
@@ -141,7 +133,7 @@ void MainWindow::configureUi(){
     ui->infoMessage->setText("");
     ui->infoMessage->setReadOnly(true);
     ui->infoMessage->setFocusPolicy(Qt::NoFocus);
-    ui->ipAdressInput->setFocusPolicy(Qt::NoFocus);
+    //  ui->ipAdressInput->setFocusPolicy(Qt::NoFocus);
     ui->pathOfFile->setReadOnly(true);
     ui->pathOfSaveFolder->setReadOnly(true);
     ui->convertFileBtn->setDisabled(true);
@@ -151,10 +143,9 @@ void MainWindow::configureUi(){
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 
-  ::close(sd);
-
-  // accept event and close app.
-  event->accept();
+    ::close(sd);
+    // accept event and close app.
+    event->accept();
 }
 
 

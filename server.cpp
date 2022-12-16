@@ -15,37 +15,33 @@
 
 #define PORT 9000
 int fileNr;
-// extern int errno;
 
+static void *treat(void *); /* functia executata de fiecare thread*/
+void respond(void *);
 typedef struct threadData
 {
     int idThread; // id-ul thread-ului
     int cl;       // descriptorul returnat de accept()
 } threadData;
-int min(int a, int b)
-{
-    return a < b ? a : b;
-}
-static void *treat(void *); /* functia executata de fiecare thread*/
-void respond(void *);
+
 void receiveType(int sd, char *typeReceived)
 {
 
     int r = recv(sd, typeReceived, TRANSFERSIZE, 0);
     if (r < 0)
     {
-        printf("ERROR RECEIVING TYPE");
+        printf("[server] Error receiving type");
         exit(1);
     }
     typeReceived[r] = '\0';
-    printf("%s", typeReceived);
+    printf("\nConversion Type:%s\n", typeReceived);
 }
 void receiveHash(int sd, char *fileHash)
 {
     int r = recv(sd, fileHash, TRANSFERSIZE, 0);
     if (r < 0)
     {
-        printf("ERROR RECEIVING HASH");
+        printf("[server] Error receiving hash");
         exit(1);
     }
 }
@@ -60,7 +56,7 @@ void convertFile(char *conversionType, char *fileType1, char *fileType2, char *f
 
     if ((fp = fopen("configuration.txt", "r")) == NULL)
     {
-        printf("ERROR OPENING CONFIGURATION FILE - SERVER");
+        printf("[server] Error opening configuration file");
         exit(1);
     }
 
@@ -71,9 +67,8 @@ void convertFile(char *conversionType, char *fileType1, char *fileType2, char *f
             break;
         }
     }
-    printf("\n line:%s\n", line);
     fclose(fp);
-  
+
     int i = 0;
     while (line[i] != '"')
     {
@@ -89,13 +84,36 @@ void convertFile(char *conversionType, char *fileType1, char *fileType2, char *f
     }
     utilitary[j] = '\0';
 
+    if(strcmp(conversionType,"tex-html")==0)
+    sprintf(command, "%s -dir %s/%s/ %s", utilitary, "CachedFiles/html",fileHash,receivedFilePath);
+    else if(strcmp(conversionType,"asp-php")==0)
+    sprintf(command, "%s -o %s/%s.%s %s", utilitary, "CachedFiles/php",fileHash, fileType2, receivedFilePath);
+    else
     sprintf(command, "%s %s %s", utilitary, receivedFilePath, convertedFilePath);
+    printf("%s command",command);
     system(command);
-    // char *response="OK";
-    // send(sd,response,TRANSFERSIZE,0);
-    printf("---\n%s\n----", fileHash);
-    printf("\n\n\n%s\n\n\n", command);
-    // printf("DD |%s|--|%s| DD\n", fileType1, fileType2);
+    printf(" |T1: %s|--|T2: %s|\n", fileType1, fileType2);
+}
+int doesFileExist(char *convertedFilePath, int sd)
+{
+    if (access(convertedFilePath, F_OK) == 0)
+    {
+        if (send(sd, "Y", 1, 0) == -1)
+        {
+            perror("[server] Error in sending confirmation to client");
+            exit(1);
+        }
+        return 1;
+    }
+    else
+    {
+        if (send(sd, "N", 1, 0) == -1)
+        {
+            perror("[server] Error in sending confirmation to client");
+            exit(1);
+        }
+        return 0;
+    }
 }
 void processFile(int sd)
 {
@@ -106,50 +124,48 @@ void processFile(int sd)
     char fileHash[TRANSFERSIZE];
     char receivedFilePath[TRANSFERSIZE];
     char convertedFilePath[TRANSFERSIZE];
-    receiveType(sd, conversionType);
 
+    receiveType(sd, conversionType);
     extractTypes(conversionType, fileType1, fileType2);
     receiveHash(sd, fileHash);
-    sprintf(convertedFilePath, "CachedFiles/%s/%s.%s", fileType2, fileHash, fileType2);
-    // sleep(1);
-    // verifyHash(fileHash);
-    writeReceivedFile(sd, "ReceivedFiles", receivedFilePath, fileType1, fileNr);
-    printf("%s\n", conversionType);
-    printf("%s\n", fileType1);
-    printf("%s\n", fileType2);
-    convertFile(conversionType, fileType1, fileType2, fileHash, receivedFilePath, convertedFilePath);
-
-  ////  if ((fp = fopen(convertedFilePath, "rb")) == NULL)
-  ////  {
-  ////      printf("ERROR OPENING CONVERTED FILE - SERVER");
-   ////     exit(1);
-  ////  }
-  ////  
-  ////  printf("D%s\n", convertedFilePath);
-   // sendConfirmation(sd,"OK");
-   printf("\n|%s|\n", convertedFilePath);
-  
-   if ((fp = fopen(convertedFilePath, "rb")) == NULL)
+    if(strcmp(conversionType,"tex-html")!=0)
+        sprintf(convertedFilePath, "CachedFiles/%s/%s.%s", fileType2, fileHash, fileType2);
+    else
+        {
+            char commandMkdir[TRANSFERSIZE];
+            sprintf(commandMkdir,"mkdir CachedFiles/%s/%s",fileType2,fileHash);
+            system(commandMkdir);
+            sprintf(convertedFilePath, "CachedFiles/%s/%s/index.html", fileType2, fileHash);
+        }
+    if (doesFileExist(convertedFilePath, sd) == 0)
     {
-        printf("ERROR OPENING FILE");
+        writeReceivedFile(sd, "ReceivedFiles", receivedFilePath, fileType1, fileNr);
+        printf("[server] File does NOT exist in cache\n");
+        convertFile(conversionType, fileType1, fileType2, fileHash, receivedFilePath, convertedFilePath);
+
+        char removeCommand[TRANSFERSIZE];
+        sprintf(removeCommand, "rm %s", receivedFilePath);
+        system(removeCommand);
+    }
+    else
+    {
+        printf("File DOES exist in cache\n");
+    }
+printf("\n \n %s \n \n",convertedFilePath);
+    if ((fp = fopen(convertedFilePath, "rb")) == NULL)
+    {
+        printf("[server] Error opening converted file\n");
         exit(1);
     }
-    long int size=sendFileSize(fp, sd);
-    printf("SIZE:%ld\n",size);
-    sendFile(fp, sd,size);
-    // char *response="OK";
-    // send(sd,response,TRANSFERSIZE,0);
-    //printf("---\n%s\n----", fileHash);
-
-    //sleep(1);
-    // printf("DD |%s|--|%s| DD\n", fileType1, fileType2);
+    long int size = sendFileSize(fp, sd);
+ 
+    sendFile(fp, sd, size);
 }
 
 int main()
 {
     struct sockaddr_in server; // structura folosita de server
     struct sockaddr_in from;
-    int nr; // mesajul primit de trimis la client
     int sd; // descriptorul de socket
     int pid;
     pthread_t th[200]; // Identificatorii thread-urilor care se vor crea
@@ -177,20 +193,20 @@ int main()
     /* utilizam un port utilizator */
     server.sin_port = htons(PORT);
 
-    /* atasam socketul */
+    /* este atasat socketul */
     if (bind(sd, (struct sockaddr *)&server, sizeof(struct sockaddr)) == -1)
     {
         perror("[server]Eroare la bind().\n");
         return errno;
     }
 
-    /* punem serverul sa asculte daca vin clienti sa se conecteze */
+    /*  serverul asculta daca vin clienti sa se conecteze*/
     if (listen(sd, 2) == -1)
     {
         perror("[server]Eroare la listen().\n");
         return errno;
     }
-    /* servim in mod concurent clientii...folosind thread-uri */
+    /*  clientii serviti in mod concurent -> folosind thread-uri */
     while (1)
     {
         int client;
@@ -209,52 +225,32 @@ int main()
         }
 
         /* s-a realizat conexiunea, se astepta mesajul */
-
-        // int idThread; //id-ul threadului
-        // int cl; //descriptorul intors de accept
-
         td = (struct threadData *)malloc(sizeof(struct threadData));
         td->idThread = i++;
         td->cl = client;
 
         pthread_create(&th[i], NULL, &treat, td);
-
-    } // while
+    }
 };
 static void *treat(void *arg)
 {
     struct threadData tdL;
     tdL = *((struct threadData *)arg);
-    printf("[thread]- %d - Asteptam mesajul...\n", tdL.idThread);
+    printf("[thread]- %d - Asteptam fisierul...\n", tdL.idThread);
     fflush(stdout);
     pthread_detach(pthread_self());
-    // while(1){
+
     respond((struct threadData *)arg);
-    // int bytesReceived = recv(tdL.cl, NULL, 0, 0);
-    // if (bytesReceived == 0 || bytesReceived == -1) //cat timp inca este conectat la client
-    // {
-    //    break;
-    //}
-    //  }
-    /* am terminat cu acest client, inchidem conexiunea */
 
     close((intptr_t)arg);
-    printf("\nTHREAD CLOSED\n");
+    printf("\n THREAD CLOSED \n");
     return (NULL);
 };
 
 void respond(void *arg)
 {
-    int nr, i = 0;
     struct threadData tdL;
     tdL = *((struct threadData *)arg);
-    /* if (read (tdL.cl, &nr,sizeof(int)) <= 0)
-            {
-              printf("[Thread %d]\n",tdL.idThread);
-              perror ("Eroare la read() de la client.\n");
-            } */
-
     processFile(tdL.cl);
-
-    printf("[Thread %d]Mesajul a fost receptionat...%d\n", tdL.idThread, nr);
+    printf("[Thread %d]Fisierul a fost convertit si trimis...\n", tdL.idThread);
 }
