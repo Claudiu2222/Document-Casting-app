@@ -44,8 +44,12 @@ void getFileHash(char* fileName,char * fileHash)
     system(command);
 
     FILE *fp;
-    fp = fopen("hashFile.txt", "r");
 
+    if ((fp = fopen("hashFile.txt", "r")) == NULL)
+        {
+            printf("[client] Error opening hash file\n");
+            exit(1);
+        }
     fread(fileHash,1024,1,fp);
 
     fclose(fp);

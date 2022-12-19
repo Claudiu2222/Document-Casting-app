@@ -97,9 +97,9 @@ build CMakeFiles/clientUI.dir/home/claudiupop/repos/computerNetworksProject/shar
 #############################################
 # Link the executable clientUI
 
-build clientUI: CXX_EXECUTABLE_LINKER__clientUI_Debug CMakeFiles/clientUI.dir/clientUI_autogen/mocs_compilation.cpp.o CMakeFiles/clientUI.dir/main.cpp.o CMakeFiles/clientUI.dir/mainwindow.cpp.o CMakeFiles/clientUI.dir/functions.cpp.o CMakeFiles/clientUI.dir/home/claudiupop/repos/computerNetworksProject/sharedFunctions.cpp.o | /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Widgets.so.6.4.1 /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Gui.so.6.4.1 /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Core.so.6.4.1 /usr/lib/x86_64-linux-gnu/libGL.so || clientUI_autogen clientUI_autogen_timestamp_deps
+build clientUI: CXX_EXECUTABLE_LINKER__clientUI_Debug CMakeFiles/clientUI.dir/clientUI_autogen/mocs_compilation.cpp.o CMakeFiles/clientUI.dir/main.cpp.o CMakeFiles/clientUI.dir/mainwindow.cpp.o CMakeFiles/clientUI.dir/functions.cpp.o CMakeFiles/clientUI.dir/home/claudiupop/repos/computerNetworksProject/sharedFunctions.cpp.o | /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Widgets.so.6.4.1 /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Gui.so.6.4.1 /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Core.so.6.4.1 /usr/lib/x86_64-linux-gnu/libGLX.so /usr/lib/x86_64-linux-gnu/libOpenGL.so || clientUI_autogen clientUI_autogen_timestamp_deps
   FLAGS = -DQT_QML_DEBUG -g
-  LINK_LIBRARIES = -Wl,-rpath,/home/claudiupop/Qt/6.4.1/gcc_64/lib:  /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Widgets.so.6.4.1  /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Gui.so.6.4.1  /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Core.so.6.4.1  -pthread  /usr/lib/x86_64-linux-gnu/libGL.so
+  LINK_LIBRARIES = -Wl,-rpath,/home/claudiupop/Qt/6.4.1/gcc_64/lib:  /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Widgets.so.6.4.1  /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Gui.so.6.4.1  /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Core.so.6.4.1  -pthread  /usr/lib/x86_64-linux-gnu/libGLX.so  /usr/lib/x86_64-linux-gnu/libOpenGL.so
   OBJECT_DIR = CMakeFiles/clientUI.dir
   POST_BUILD = :
   PRE_LINK = :
@@ -198,7 +198,7 @@ build clientUI_autogen/timestamp clientUI_autogen/mocs_compilation.cpp | ${cmake
 #############################################
 # Phony custom command for CMakeFiles/clientUI_autogen_timestamp_deps
 
-build CMakeFiles/clientUI_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/clientUI_autogen_timestamp_deps: phony /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Widgets.so.6.4.1 /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Core.so.6.4.1 /home/claudiupop/Qt/6.4.1/gcc_64/./libexec/moc /home/claudiupop/Qt/6.4.1/gcc_64/./libexec/uic
+build CMakeFiles/clientUI_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/clientUI_autogen_timestamp_deps: phony /home/claudiupop/Qt/6.4.1/gcc_64/./libexec/moc /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Core.so.6.4.1 /home/claudiupop/Qt/6.4.1/gcc_64/./libexec/uic /home/claudiupop/Qt/6.4.1/gcc_64/lib/libQt6Widgets.so.6.4.1
 
 
 #############################################

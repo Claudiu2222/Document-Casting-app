@@ -48,14 +48,6 @@ void writeReceivedFile(int sd, char *savePath, char *filePath, char *fileType, i
     printf("RECV %ld | %ld   \n", readBytes, fileSize);
     fclose(fp);
 }
-void sendConfirmation(int sd, char *confirmation)
-{
-    if (send(sd, confirmation, TRANSFERSIZE, 0) == -1)
-    {
-        perror("[client] Error in sending file confirmation");
-        exit(1);
-    }
-}
 void extractTypes(char *conversionType, char *fileType1, char *fileType2)
 {
 

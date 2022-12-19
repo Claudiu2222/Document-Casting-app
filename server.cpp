@@ -84,13 +84,13 @@ void convertFile(char *conversionType, char *fileType1, char *fileType2, char *f
     }
     utilitary[j] = '\0';
 
-    if(strcmp(conversionType,"tex-html")==0)
-    sprintf(command, "%s -dir %s/%s/ %s", utilitary, "CachedFiles/html",fileHash,receivedFilePath);
-    else if(strcmp(conversionType,"asp-php")==0)
-    sprintf(command, "%s -o %s/%s.%s %s", utilitary, "CachedFiles/php",fileHash, fileType2, receivedFilePath);
+    if (strcmp(conversionType, "tex-html") == 0)
+        sprintf(command, "%s -dir %s/%s/ %s", utilitary, "CachedFiles/html", fileHash, receivedFilePath);
+    else if (strcmp(conversionType, "asp-php") == 0)
+        sprintf(command, "%s -o %s/%s.%s %s", utilitary, "CachedFiles/php", fileHash, fileType2, receivedFilePath);
     else
-    sprintf(command, "%s %s %s", utilitary, receivedFilePath, convertedFilePath);
-    printf("%s command",command);
+        sprintf(command, "%s %s %s", utilitary, receivedFilePath, convertedFilePath);
+    printf("%s command", command);
     system(command);
     printf(" |T1: %s|--|T2: %s|\n", fileType1, fileType2);
 }
@@ -128,15 +128,15 @@ void processFile(int sd)
     receiveType(sd, conversionType);
     extractTypes(conversionType, fileType1, fileType2);
     receiveHash(sd, fileHash);
-    if(strcmp(conversionType,"tex-html")!=0)
+    if (strcmp(conversionType, "tex-html") != 0)
         sprintf(convertedFilePath, "CachedFiles/%s/%s.%s", fileType2, fileHash, fileType2);
     else
-        {
-            char commandMkdir[TRANSFERSIZE];
-            sprintf(commandMkdir,"mkdir CachedFiles/%s/%s",fileType2,fileHash);
-            system(commandMkdir);
-            sprintf(convertedFilePath, "CachedFiles/%s/%s/index.html", fileType2, fileHash);
-        }
+    {
+        char commandMkdir[TRANSFERSIZE];
+        sprintf(commandMkdir, "mkdir CachedFiles/%s/%s", fileType2, fileHash);
+        system(commandMkdir);
+        sprintf(convertedFilePath, "CachedFiles/%s/%s/index.html", fileType2, fileHash);
+    }
     if (doesFileExist(convertedFilePath, sd) == 0)
     {
         writeReceivedFile(sd, "ReceivedFiles", receivedFilePath, fileType1, fileNr);
@@ -151,14 +151,14 @@ void processFile(int sd)
     {
         printf("File DOES exist in cache\n");
     }
-printf("\n \n %s \n \n",convertedFilePath);
+    printf("\n \n %s \n \n", convertedFilePath);
     if ((fp = fopen(convertedFilePath, "rb")) == NULL)
     {
         printf("[server] Error opening converted file\n");
         exit(1);
     }
     long int size = sendFileSize(fp, sd);
- 
+
     sendFile(fp, sd, size);
 }
 

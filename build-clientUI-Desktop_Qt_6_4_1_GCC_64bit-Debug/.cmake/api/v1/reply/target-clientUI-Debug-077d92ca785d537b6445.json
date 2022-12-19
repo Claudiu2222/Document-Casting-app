@@ -35,6 +35,7 @@
 			"/home/claudiupop/Qt/Tools/CMake/share/cmake-3.24/Modules/CMakeFindDependencyMacro.cmake",
 			"/home/claudiupop/Qt/6.4.1/gcc_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake",
 			"/home/claudiupop/Qt/6.4.1/gcc_64/lib/cmake/Qt6/Qt6Dependencies.cmake",
+			"/home/claudiupop/Qt/Tools/CMake/share/cmake-3.24/Modules/FindOpenGL.cmake",
 			"/home/claudiupop/Qt/6.4.1/gcc_64/lib/cmake/Qt6/FindWrapOpenGL.cmake",
 			"/home/claudiupop/Qt/6.4.1/gcc_64/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake",
 			"/home/claudiupop/Qt/6.4.1/gcc_64/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake",
@@ -178,12 +179,12 @@
 				"parent" : 10
 			},
 			{
-				"file" : 12,
+				"file" : 13,
 				"parent" : 24
 			},
 			{
 				"command" : 12,
-				"file" : 12,
+				"file" : 13,
 				"line" : 39,
 				"parent" : 25
 			},
@@ -200,22 +201,22 @@
 				"parent" : 27
 			},
 			{
-				"file" : 11,
+				"file" : 12,
 				"parent" : 28
 			},
 			{
 				"command" : 7,
-				"file" : 11,
+				"file" : 12,
 				"line" : 40,
 				"parent" : 29
 			},
 			{
-				"file" : 10,
+				"file" : 11,
 				"parent" : 30
 			},
 			{
 				"command" : 11,
-				"file" : 10,
+				"file" : 11,
 				"line" : 30,
 				"parent" : 31
 			},
@@ -232,14 +233,30 @@
 				"parent" : 33
 			},
 			{
-				"file" : 9,
+				"file" : 10,
 				"parent" : 34
 			},
 			{
-				"command" : 5,
-				"file" : 9,
-				"line" : 44,
+				"command" : 8,
+				"file" : 10,
+				"line" : 10,
 				"parent" : 35
+			},
+			{
+				"file" : 9,
+				"parent" : 36
+			},
+			{
+				"command" : 9,
+				"file" : 9,
+				"line" : 512,
+				"parent" : 37
+			},
+			{
+				"command" : 6,
+				"file" : 9,
+				"line" : 510,
+				"parent" : 37
 			}
 		]
 	},
@@ -392,8 +409,13 @@
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 36,
-				"fragment" : "/usr/lib/x86_64-linux-gnu/libGL.so",
+				"backtrace" : 38,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libGLX.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 39,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libOpenGL.so",
 				"role" : "libraries"
 			}
 		],

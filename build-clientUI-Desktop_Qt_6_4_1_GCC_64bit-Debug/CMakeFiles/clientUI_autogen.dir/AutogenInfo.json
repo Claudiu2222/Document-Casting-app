@@ -421,7 +421,7 @@
 	"MOC_RELAXED_MODE" : false,
 	"MOC_SKIP" : [],
 	"MULTI_CONFIG" : false,
-	"PARALLEL" : 6,
+	"PARALLEL" : 8,
 	"PARSE_CACHE_FILE" : "/home/claudiupop/repos/computerNetworksProject/build-clientUI-Desktop_Qt_6_4_1_GCC_64bit-Debug/CMakeFiles/clientUI_autogen.dir/ParseCache.txt",
 	"QT_MOC_EXECUTABLE" : "/home/claudiupop/Qt/6.4.1/gcc_64/./libexec/moc",
 	"QT_UIC_EXECUTABLE" : "/home/claudiupop/Qt/6.4.1/gcc_64/./libexec/uic",

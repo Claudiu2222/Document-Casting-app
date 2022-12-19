@@ -55,6 +55,9 @@ void MainWindow::connectFileDialogsToBtns(){
 }
 void MainWindow::convertFile()
 {
+     ui->infoMessage->setText(" ");
+     ui->infoMessage->repaint();
+
     if(connectToServer()==2)
         return;
 
@@ -92,6 +95,7 @@ void MainWindow::convertFile()
     ui->infoMessage->setText("FILE TRANSFER COMPLETED");
 }
 int MainWindow::connectToServer(){
+
 
     QLineEdit *portInput = ui->portInput;
 

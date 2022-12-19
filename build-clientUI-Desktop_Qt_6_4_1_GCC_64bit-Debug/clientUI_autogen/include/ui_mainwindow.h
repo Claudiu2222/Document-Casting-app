@@ -73,11 +73,12 @@ public:
         MainWindow->resize(600, 370);
         MainWindow->setMinimumSize(QSize(600, 370));
         MainWindow->setMaximumSize(QSize(600, 370));
+        MainWindow->setStyleSheet(QString::fromUtf8("color:white;"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         centralwidget->setMinimumSize(QSize(600, 370));
         centralwidget->setMaximumSize(QSize(535, 370));
-        centralwidget->setStyleSheet(QString::fromUtf8("background-color:#4C0070;"));
+        centralwidget->setStyleSheet(QString::fromUtf8("background-color:#92AA83;"));
         gridLayout_2 = new QGridLayout(centralwidget);
         gridLayout_2->setObjectName("gridLayout_2");
         verticalSpacer_4 = new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Fixed);
@@ -117,7 +118,7 @@ public:
 "    min-height:20px;\n"
 "	max-width:400px;\n"
 "    padding:3px;\n"
-"	background-color: rgb(79, 3, 121);\n"
+"background-color:#92AA83;\n"
 "qproperty-alignment: AlignCenter;}\n"
 ""));
 
@@ -128,14 +129,14 @@ public:
         selectFolderButton->setStyleSheet(QString::fromUtf8("\n"
 "QPushButton\n"
 "{ font: bold 14px;\n"
-"background-color:rgb(79, 3, 121);\n"
+"background-color:#FFBF00;\n"
 "max-width:100px;\n"
 "min-height:20px;\n"
 "\n"
 "}\n"
 "QPushButton:hover\n"
 "{ font: bold 14px;\n"
-"background-color:rgb(133, 3, 205)\n"
+"background-color:#FF7000;\n"
 "}"));
 
         horizontalLayout_4->addWidget(selectFolderButton);
@@ -183,14 +184,14 @@ public:
 "    min-height:20px;\n"
 "	max-width:110px;\n"
 "    padding:3px;\n"
-"	background-color: rgb(79, 3, 121);\n"
+"background-color:#92AA83;\n"
 "qproperty-alignment: AlignCenter;}\n"
 "QLineEdit:hover\n"
 "{\n"
 "    border-color: white;\n"
 "}\n"
 "QLineEdit:focus{\n"
-"background-color:rgb(133, 3, 205);}"));
+"background-color:#92AA83;}"));
 
         horizontalLayout->addWidget(ipAdressInput);
 
@@ -219,15 +220,14 @@ public:
 "    font: bold 16px;\n"
 "    min-height:20px;\n"
 "	max-width:50px;\n"
-"    padding:3px;\n"
-"	background-color: rgb(79, 3, 121);\n"
+"    padding:3px;background-color:#92AA83;\n"
 "qproperty-alignment: AlignCenter;}\n"
 "QLineEdit:hover\n"
 "{\n"
 "    border-color: white;\n"
+"background-color:#92AA83;\n"
 "}\n"
-"QLineEdit:focus{\n"
-"background-color:rgb(133, 3, 205);}"));
+""));
 
         horizontalLayout->addWidget(portInput);
 
@@ -285,7 +285,7 @@ public:
 "    min-height:20px;\n"
 "	max-width:400px;\n"
 "    padding:3px;\n"
-"	background-color: rgb(79, 3, 121);\n"
+"background-color:#92AA83;\n"
 "qproperty-alignment: AlignCenter;}\n"
 ""));
 
@@ -296,14 +296,14 @@ public:
         selectFileButton->setStyleSheet(QString::fromUtf8("\n"
 "QPushButton\n"
 "{ font: bold 14px;\n"
-"background-color:rgb(79, 3, 121);\n"
+"background-color:#FFBF00;\n"
 "max-width:100px;\n"
 "min-height:20px;\n"
 "\n"
 "}\n"
 "QPushButton:hover\n"
 "{ font: bold 14px;\n"
-"background-color:rgb(133, 3, 205)\n"
+"background-color:#FF7000;\n"
 "}"));
 
         horizontalLayout_2->addWidget(selectFileButton);
@@ -355,6 +355,13 @@ public:
         selectTypeBox->addItem(QString());
         selectTypeBox->addItem(QString());
         selectTypeBox->setObjectName("selectTypeBox");
+        selectTypeBox->setStyleSheet(QString::fromUtf8("QComboBox{\n"
+"background-color:#FFBF00;\n"
+"font: bold;\n"
+"selection-background-color:#FFBF00}\n"
+"QComboBox::hover{\n"
+"background-color:#FF7000;\n"
+"}"));
 
         horizontalLayout_5->addWidget(selectTypeBox);
 
@@ -378,11 +385,16 @@ public:
         convertFileBtn->setStyleSheet(QString::fromUtf8("\n"
 "QPushButton\n"
 "{ font: bold 14px;\n"
-"background-color:rgb(79, 3, 121)\n"
+"background-color:#FFBF00;\n"
 "}\n"
 "QPushButton:hover\n"
 "{ font: bold 14px;\n"
-"background-color:rgb(133, 3, 205)\n"
+"background-color:#FF7000;\n"
+"}\n"
+"QPushButton:disabled{\n"
+"\n"
+"	background-color: rgb(186, 189, 182);\n"
+"\n"
 "}"));
 
         horizontalLayout_6->addWidget(convertFileBtn);
