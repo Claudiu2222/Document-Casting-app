@@ -5,6 +5,14 @@
 #include <sys/socket.h>
 #define TRANSFERSIZE 4096
 
+/**
+ * @brief Verify if the provided paths and conversion type are valid for conversion
+ * 
+ * @param pathOfFile QLineEdit* representing the path of the file to convert
+ * @param pathOfSaveFolder QLineEdit* representing the path of the folder to save the converted file
+ * @param convertFileBtn QPushButton* representing the button used to trigger the conversion process
+ * @param selectTypeBox QComboBox* representing the selection box for the conversion type
+ */
 void  verifyIfValid(QLineEdit* pathOfFile, QLineEdit* pathOfSaveFolder, QPushButton* convertFileBtn, QComboBox* selectTypeBox){
     QString conversionType = selectTypeBox->currentText();
 
@@ -15,7 +23,11 @@ void  verifyIfValid(QLineEdit* pathOfFile, QLineEdit* pathOfSaveFolder, QPushBut
     else
         convertFileBtn->setEnabled(false);
 }
-
+/**
+ * @brief Extracts the hash value of a file
+ * 
+ * @param fileHash char* representing the hash value of the file to extract
+ */
 void extractFileHash(char* fileHash)
 {
     int i=0;
@@ -25,6 +37,14 @@ void extractFileHash(char* fileHash)
     }
     fileHash[i]='\0';
 }
+/**
+ * @brief Connects the signals between the path and type selection fields and the conversion button
+ * 
+ * @param pathOfFile QLineEdit* representing the path of the file to convert
+ * @param pathOfSaveFolder QLineEdit* representing the path of the folder to save the converted file
+ * @param convertFileBtn QPushButton* representing the button used to trigger the conversion process
+ * @param selectTypeBox QComboBox* representing the selection box for the conversion type
+ */
 void connectSignalsFile(QLineEdit* pathOfFile, QLineEdit* pathOfSaveFolder, QPushButton* convertFileBtn, QComboBox* selectTypeBox ){
     QObject::connect(pathOfFile, &QLineEdit::textChanged, [pathOfFile, pathOfSaveFolder,  convertFileBtn, selectTypeBox]() {
         verifyIfValid(pathOfFile, pathOfSaveFolder, convertFileBtn, selectTypeBox);
@@ -36,6 +56,12 @@ void connectSignalsFile(QLineEdit* pathOfFile, QLineEdit* pathOfSaveFolder, QPus
         verifyIfValid(pathOfFile, pathOfSaveFolder,  convertFileBtn, selectTypeBox);
     });
 }
+/**
+ * @brief Computes the hash value of a file
+ * 
+ * @param fileName char* representing the name of the file to compute the hash value for
+ * @param fileHash char* representing the hash value of the file
+ */
 void getFileHash(char* fileName,char * fileHash)
 {
     char command[200]="sha256sum ";
@@ -59,6 +85,12 @@ void getFileHash(char* fileName,char * fileHash)
     system("rm hashFile.txt");
 
 }
+/**
+ * @brief Receives a confirmation message from the server
+ * 
+ * @param sd int representing the socket descriptor to receive the message from
+ * @return 1 if the server response is 'Y', 0 otherwise
+ */
 int receiveConfirmation(int sd){
     char serverResponse[1];
     int r = recv(sd, serverResponse, 1, 0);
@@ -74,6 +106,13 @@ int receiveConfirmation(int sd){
     else return 0;
 
 }
+
+/**
+ * @brief Sends the hash value of a file to the server
+ * 
+ * @param sd representing the socket descriptor to send the hash value to
+ * @param fileName representing the name of the file to calculate the hash value for
+ */
 void sendFileHash(int sd, char* fileName)
 {
     char fileHash[1024]={0};
@@ -84,6 +123,13 @@ void sendFileHash(int sd, char* fileName)
         exit(1);
     }
 }
+
+/**
+ * @brief Sends the hash value of a file to the server
+ * 
+ * @param sd int representing the socket descriptor to send the hash value to
+ * @param fileName char* representing the name of the file to send the hash value for
+ */
 void sendType(int sd, char *fileTypes)
 {
     char response[TRANSFERSIZE];

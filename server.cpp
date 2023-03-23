@@ -1,3 +1,9 @@
+/**
+ * @file server.cpp 
+ * @brief This file contains the implementation of a multithreaded server which accepts requests from clients and performs file conversion operations.
+ * 
+ * 
+ */
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -16,14 +22,27 @@
 #define PORT 9000
 int fileNr;
 
-static void *treat(void *); /* functia executata de fiecare thread*/
+
+static void *treat(void *); 
 void respond(void *);
+
+/**
+ * @brief Structure representing data to be passed to a thread.
+ * 
+ * This struct contains the thread ID and the descriptor returned by the accept() function.
+ */
 typedef struct threadData
 {
-    int idThread; // id-ul thread-ului
-    int cl;       // descriptorul returnat de accept()
+    int idThread;
+    int cl;       
 } threadData;
 
+/**
+ * @brief Receives a message from a socket and stores it in a buffer.
+ * 
+ * @param sd The socket descriptor to receive data from.
+ * @param typeReceived The buffer to store the received data in.
+ */
 void receiveType(int sd, char *typeReceived)
 {
 
@@ -36,6 +55,12 @@ void receiveType(int sd, char *typeReceived)
     typeReceived[r] = '\0';
     printf("\nConversion Type:%s\n", typeReceived);
 }
+/**
+*@brief Receives the hash of a file from a client over a socket connection.
+*@param sd The socket descriptor.
+*@param fileHash Pointer to a character array where the received hash will be stored.
+*@return void
+*/
 void receiveHash(int sd, char *fileHash)
 {
     int r = recv(sd, fileHash, TRANSFERSIZE, 0);
@@ -46,6 +71,15 @@ void receiveHash(int sd, char *fileHash)
     }
 }
 
+/**
+*Converts a file from one format to another using a command line utility specified in the configuration file.
+*@param conversionType the type of conversion to be performed (e.g., "pdf-txt")
+*@param fileType1 the original file type
+*@param fileType2 the target file type
+*@param fileHash the hash of the file to be converted
+*@param receivedFilePath the path to the received file
+*@param convertedFilePath the path where the converted file will be saved
+*/
 void convertFile(char *conversionType, char *fileType1, char *fileType2, char *fileHash, char *receivedFilePath, char *convertedFilePath)
 {
     char command[TRANSFERSIZE];
@@ -94,6 +128,12 @@ void convertFile(char *conversionType, char *fileType1, char *fileType2, char *f
     system(command);
     printf(" |T1: %s|--|T2: %s|\n", fileType1, fileType2);
 }
+/**
+*Checks if a file exists at the specified path and sends a confirmation message to the client through the specified socket descriptor.
+*@param convertedFilePath the path to the file
+*@param sd the socket descriptor
+*@return 1 if the file exists, 0 otherwise
+*/
 int doesFileExist(char *convertedFilePath, int sd)
 {
     if (access(convertedFilePath, F_OK) == 0)
@@ -115,6 +155,11 @@ int doesFileExist(char *convertedFilePath, int sd)
         return 0;
     }
 }
+/**
+*Processes the file received from the client by extracting the file type and hash,
+*checking if it exists in the cache and if not, converting it and storing it in the cache.
+*@param sd the socket descriptor of the connection with the client
+*/
 void processFile(int sd)
 {
     FILE *fp;
@@ -164,67 +209,66 @@ void processFile(int sd)
 
 int main()
 {
-    struct sockaddr_in server; // structura folosita de server
+    struct sockaddr_in server; 
     struct sockaddr_in from;
-    int sd; // descriptorul de socket
+    int sd; 
     int pid;
-    pthread_t th[200]; // Identificatorii thread-urilor care se vor crea
+    pthread_t th[200]; // Thread identifiers
     int i = 0;
 
-    /* crearea unui socket */
+    /* Socket creation */
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("[server]Eroare la socket().\n");
         return errno;
     }
-    /* utilizarea optiunii SO_REUSEADDR */
+
     int on = 1;
     setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
-    /* pregatirea structurilor de date */
+    /* Prepare the structures */
     bzero(&server, sizeof(server));
     bzero(&from, sizeof(from));
 
-    /* umplem structura folosita de server */
-    /* stabilirea familiei de socket-uri */
+  
+    /* Set the adress family of the server socket to IPv4 */
     server.sin_family = AF_INET;
-    /* acceptam orice adresa */
+    /* Bind the adress to the local IPv4 adress */
     server.sin_addr.s_addr = htonl(INADDR_ANY);
-    /* utilizam un port utilizator */
+    /* Set the port */
     server.sin_port = htons(PORT);
 
-    /* este atasat socketul */
+    /* Bind the socket to the local adress of the server */
     if (bind(sd, (struct sockaddr *)&server, sizeof(struct sockaddr)) == -1)
     {
         perror("[server]Eroare la bind().\n");
         return errno;
     }
 
-    /*  serverul asculta daca vin clienti sa se conecteze*/
+    /*  Server listens for client connections */
     if (listen(sd, 2) == -1)
     {
         perror("[server]Eroare la listen().\n");
         return errno;
     }
-    /*  clientii serviti in mod concurent -> folosind thread-uri */
+    /*  Clients are served concurently with the aid of threads */
     while (1)
     {
         int client;
-        threadData *td; // parametru functia executata de thread
+        threadData *td; 
         socklen_t length = sizeof(from);
 
         printf("[server]Asteptam la portul %d...\n", PORT);
         fflush(stdout);
 
-        // client= malloc(sizeof(int));
-        /* acceptam un client (stare blocanta pina la realizarea conexiunii) */
+        /* We accept the client trying to connect to the server */
         if ((client = accept(sd, (struct sockaddr *)&from, &length)) < 0)
         {
             perror("[server]Eroare la accept().\n");
             continue;
         }
 
-        /* s-a realizat conexiunea, se astepta mesajul */
+        /* Client is connected */
         td = (struct threadData *)malloc(sizeof(struct threadData));
         td->idThread = i++;
         td->cl = client;
@@ -232,16 +276,26 @@ int main()
         pthread_create(&th[i], NULL, &treat, td);
     }
 };
+
+/**
+ * This function is executed by each thread created by the server to handle a client connection.
+ * @param arg - a pointer to a threadData struct containing information about the thread and client connection.
+ * @return NULL
+ */
 static void *treat(void *arg)
 {
     struct threadData tdL;
+    // Dereference the arg parameter to obtain the threadData struct
     tdL = *((struct threadData *)arg);
     printf("[thread]- %d - Asteptam fisierul...\n", tdL.idThread);
     fflush(stdout);
+
+    // Detach the thread to ensure that its resources are cleaned up when it exits
     pthread_detach(pthread_self());
 
     respond((struct threadData *)arg);
 
+    // Close the client socket descriptor
     close((intptr_t)arg);
     printf("\n THREAD CLOSED \n");
     return (NULL);

@@ -20,7 +20,14 @@
 #define TRANSFERSIZE 4096
 int port;
 int fileNr;
-int sd; // descriptorul de socket
+int sd; // Socket descriptor
+/**
+ * @brief Constructs a new MainWindow object.
+ *
+ * It initializes the user interface and sets up connections between signals and slots. It also sets the focus to this window and configures the user interface.
+ *
+ * @param parent The parent widget of this window.
+ */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -94,30 +101,33 @@ void MainWindow::convertFile()
     ::close(sd);
     ui->infoMessage->setText("FILE TRANSFER COMPLETED");
 }
+/**
+*@brief Attempts to connect to a server using the IP address and port specified in the user interface.
+*If the connection is successful, the function returns 1. If the connection fails, the function sets the "infoMessage" label in the user interface to "CAN'T CONNECT TO SERVER" and returns 2.
+*@return Returns 1 if the connection is successful, or 2 if the connection fails.
+*/
 int MainWindow::connectToServer(){
 
 
     QLineEdit *portInput = ui->portInput;
 
 
-    struct sockaddr_in server; // structura folosita pentru conectare
-    // mesajul trimis
-    /* stabilim portul */
+    struct sockaddr_in server; //Structure used for connecting
+
     port = portInput->text().toInt();
 
-    /* cream socketul */
+    /*Socket creation*/
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("Eroare la socket().\n");
         return 2;
     }
 
-    /* umplem structura folosita pentru realizarea conexiunii cu serverul */
-    /* familia socket-ului */
+    
     server.sin_family = AF_INET;
-    /* adresa IP a serverului */
+    
     server.sin_addr.s_addr = inet_addr(ui->ipAdressInput->text().toUtf8().data());
-    /* portul de conectare */
+    
     server.sin_port = htons(port);
 
     if (::connect(sd, (struct sockaddr *)&server, sizeof(struct sockaddr)) == -1)
@@ -144,6 +154,12 @@ void MainWindow::configureUi(){
     ui->pathOfFile->setFocusPolicy(Qt::NoFocus);
     ui->pathOfSaveFolder->setFocusPolicy(Qt::NoFocus);
 }
+/**
+
+*This function is called when the user attempts to close the application. It first closes the socket connection using the ::close() function.
+*The function then accepts the event and allows the application to be closed.
+*@param event A pointer to the QCloseEvent object.
+*/
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 

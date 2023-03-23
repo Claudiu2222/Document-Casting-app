@@ -1,9 +1,23 @@
+/**
+ * @file sharedFunctions.cpp
+ * @brief This file contains the implementation of a set of functions that are shared between the client and server applications.
+ */
 #include "sharedFunctions.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <string.h>
 #define TRANSFERSIZE 4096
+
+/**
+ * Writes a received file from a socket to the specified save path with the given file name and file type.
+ * 
+ * @param sd The socket descriptor of the connected client.
+ * @param savePath The path where the received file will be saved.
+ * @param filePath The path of the received file.
+ * @param fileType The type of the received file.
+ * @param fileNr A reference to an integer that keeps track of the received file number.
+ */
 void writeReceivedFile(int sd, char *savePath, char *filePath, char *fileType, int &fileNr)
 {
     FILE *fp;
@@ -48,6 +62,13 @@ void writeReceivedFile(int sd, char *savePath, char *filePath, char *fileType, i
     printf("RECV %ld | %ld   \n", readBytes, fileSize);
     fclose(fp);
 }
+/**
+ * Extracts two file types from a conversion type string separated by a hyphen.
+ * 
+ * @param conversionType The conversion type string containing two file types separated by a hyphen.
+ * @param fileType1 A pointer to a character array that will contain the first file type.
+ * @param fileType2 A pointer to a character array that will contain the second file type.
+ */
 void extractTypes(char *conversionType, char *fileType1, char *fileType2)
 {
 
@@ -68,6 +89,13 @@ void extractTypes(char *conversionType, char *fileType1, char *fileType2)
     }
     fileType2[j] = '\0';
 }
+/**
+ * Gets the size of a file and sends it over a socket.
+ * 
+ * @param fp A pointer to the file to be sent.
+ * @param sd The socket descriptor of the connected client.
+ * @return The size of the file in bytes.
+ */
 long int sendFileSize(FILE *fp, int sd)
 {
     fseek(fp, 0L, SEEK_END);
@@ -83,6 +111,13 @@ long int sendFileSize(FILE *fp, int sd)
     }
     return sz;
 }
+/**
+ * Sends a file over a socket.
+ * 
+ * @param fp A pointer to the file to be sent.
+ * @param sd The socket descriptor of the connected client.
+ * @param size The size of the file in bytes.
+ */
 void sendFile(FILE *fp, int sd, long int size)
 {
     int sentBytes;
